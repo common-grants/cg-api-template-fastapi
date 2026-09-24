@@ -66,6 +66,21 @@ async def _unhandled(_request: Request, _exc: Exception) -> JSONResponse:
     return _error(500, "Internal server error")
 
 
+class CommonGrantsAPI(FastAPI):
+    """FastAPI, minus the 422 responses it documents but this API never sends."""
+
+    def openapi(self) -> dict[str, Any]:
+        """Build the document once, then drop FastAPI's validation-error entries."""
+        if self.openapi_schema is None:
+            document = super().openapi()
+            for operations in document["paths"].values():
+                for operation in operations.values():
+                    operation["responses"].pop("422", None)
+            for name in ("HTTPValidationError", "ValidationError"):
+                document.get("components", {}).get("schemas", {}).pop(name, None)
+        return super().openapi()
+
+
 async def health() -> dict[str, Any]:
     """Return 200 while the service is able to handle requests."""
     return {"status": 200, "message": "ok"}
@@ -73,7 +88,22 @@ async def health() -> dict[str, Any]:
 
 def create_app(repository: OpportunityRepository) -> FastAPI:
     """Build the CommonGrants API over any repository implementation."""
-    app = FastAPI()
+    app = CommonGrantsAPI(
+        title="CommonGrants API",
+        version="0.1.0",
+        description="A CommonGrants API generated from the FastAPI template. Requests and "
+        "responses are validated with the published CommonGrants Python SDK models.",
+        openapi_tags=[
+            {
+                "name": "Opportunities",
+                "description": "Endpoints related to funding opportunities",
+            },
+            {
+                "name": "Operations",
+                "description": "Endpoints for operating the service",
+            },
+        ],
+    )
     app.state.repository = repository
     app.add_api_route(
         "/health",
