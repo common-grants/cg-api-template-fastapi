@@ -133,19 +133,22 @@ def _resolve_sorting(sorting: OppSorting) -> tuple[SortSpec, dict[str, Any]]:
         spec = SortSpec(sorting.sort_by, order)
         return spec, {"sortBy": spec.sort_by, "sortOrder": spec.sort_order}
 
-    if order is None:
-        problem = (
-            f'Sort order "{sorting.sort_order}" is not supported; use "asc" or "desc".'
+    # Name every problem, so fixing one never uncovers another fallback.
+    problems: list[str] = []
+    if sorting.sort_by == OppSortBy.CUSTOM:
+        problems.append(
+            f'Custom sort key "{sorting.custom_sort_by}" is not supported by this API.',
         )
-    else:
-        problem = (
-            f'Custom sort key "{sorting.custom_sort_by}" is not supported by this API.'
+    if order is None:
+        problems.append(
+            f'Sort order "{sorting.sort_order}" is not supported; use "asc" or "desc".',
         )
     info: dict[str, Any] = {
         "sortBy": DEFAULT_SORT.sort_by,
         "sortOrder": DEFAULT_SORT.sort_order,
         "errors": [
-            f"{problem} Results are sorted by lastModifiedAt descending instead.",
+            f"{problem} Results are sorted by lastModifiedAt descending instead."
+            for problem in problems
         ],
     }
     if sorting.custom_sort_by is not None:

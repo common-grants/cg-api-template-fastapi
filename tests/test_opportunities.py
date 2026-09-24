@@ -272,6 +272,21 @@ class TestSearchOpportunities:
         assert "sideways" in sort_info["errors"][0]
         assert stub.calls["search"][0]["sorting"] == NEWEST_FIRST
 
+    def test_reports_both_problems_for_a_custom_sort_key_with_an_unknown_order(self):
+        client, stub = harness()
+
+        sorting = {
+            "sortBy": "custom",
+            "customSortBy": "relevance",
+            "sortOrder": "sideways",
+        }
+        errors = search(client, {"sorting": sorting}).json()["sortInfo"]["errors"]
+
+        assert len(errors) == 2
+        assert "relevance" in errors[0]
+        assert "sideways" in errors[1]
+        assert stub.calls["search"][0]["sorting"] == NEWEST_FIRST
+
     # Core sets no default direction; ascending matches the other templates.
     def test_defaults_an_explicitly_requested_sort_key_to_ascending(self):
         client, stub = harness()
