@@ -1,10 +1,12 @@
-[tool.poetry]
+[project]
 name = "common-grants-api"
 version = "0.1.0"
 description = "A CommonGrants API built with FastAPI and the CommonGrants Python SDK"
 license = "CC0-1.0"
-authors = []
 readme = "README.md"
+dynamic = ["dependencies", "requires-python"]
+
+[tool.poetry]
 packages = [{include = "common_grants", from = "src"}]
 
 [tool.poetry.dependencies]
@@ -14,6 +16,7 @@ fastapi = {extras = ["standard"], version = "^0.141.1"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^26.5.1"
+httpx2 = "^2.13.1"
 pip-audit = "^2.10.1"
 pyright = "^1.1.414"
 pytest = "^9.1.1"
