@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "common-grants-api"
+version = "0.1.0"
+description = "A CommonGrants API built with FastAPI and the CommonGrants Python SDK"
+license = "CC0-1.0"
+authors = []
+readme = "README.md"
+packages = [{include = "common_grants", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+common-grants-sdk = "^0.8.1"
+fastapi = {extras = ["standard"], version = "^0.141.1"}
+
+[tool.poetry.group.dev.dependencies]
+black = "^26.5.1"
+pip-audit = "^2.10.1"
+pyright = "^1.1.414"
+pytest = "^9.1.1"
+pytest-cov = "^7.1.0"
+pyyaml = "^6.0.2"
+ruff = "^0.16.9"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.11"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+extend-safe-fixes = [
+  "D400", # docstrings should end with a period
+  "D415", # docstrings should end with a period, question mark, or exclamation point
+  "D200", # one line docstrings should fit on one line
+  "UP", # all pyupgrade checks
+]
+ignore = [
+  "ARG002", # argument unused
+  "ANN204", # missing type annotation for special method
+  "CPY001", # copyright notice: the template is CC0 and makes no copyright claim
+  "D203", # no blank line before class
+  "D212", # multi-line summary first line
+  "FA", # flake8-future-annotations ruleset
+  "FAST002", # missing type annotation for dependency
+]
+select = ["ALL"]
+
+[tool.fastapi]
+entrypoint = "common_grants.api:app"
