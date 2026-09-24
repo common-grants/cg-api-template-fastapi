@@ -5,6 +5,7 @@ extend = "../pyproject.toml"
 ignore = [
   "ANN001", # missing argument type; parametrized test arguments are typed by their cases
   "ANN201", # missing return type
+  "ANN401", # Any in test helpers that forward keyword arguments
   "D101", # missing class docstring; test names describe the behavior
   "D102", # missing method docstring
   "D103", # missing function docstring

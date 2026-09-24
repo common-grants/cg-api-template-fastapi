@@ -10,6 +10,7 @@ from itertools import count
 from typing import Any, TypeVar
 from uuid import UUID
 
+import pytest
 from common_grants_sdk.schemas.pydantic import OppDefaultFilters, PaginatedBase
 
 from common_grants.schemas.opportunity import Opportunity
@@ -46,6 +47,13 @@ def an_opportunity(**overrides: object) -> Opportunity:
 def a_malformed_opportunity() -> Opportunity:
     """Return an opportunity whose id is not a UUID. `model_copy` skips validation."""
     return an_opportunity().model_copy(update={"id": "not-a-uuid"})
+
+
+# Dumping a deliberately malformed opportunity makes Pydantic warn before the
+# response model rejects it; that warning is expected in these tests.
+malformed_data = pytest.mark.filterwarnings(
+    "ignore:Pydantic serializer warnings:UserWarning",
+)
 
 
 def page_of(items: list[Opportunity], total_items: int | None = None) -> Page:
