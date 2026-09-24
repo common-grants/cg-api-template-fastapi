@@ -1,8 +1,8 @@
 """Tests for the application factory."""
 
-from common_grants.api import create_app
 from fastapi import FastAPI
 
+from common_grants.api import create_app
 from tests.support import StubRepository, as_repository
 
 

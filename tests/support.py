@@ -10,9 +10,10 @@ from itertools import count
 from typing import Any, TypeVar
 from uuid import UUID
 
+from common_grants_sdk.schemas.pydantic import OppDefaultFilters, PaginatedBase
+
 from common_grants.schemas.opportunity import Opportunity
 from common_grants.services.repository import OpportunityRepository, Page, SortSpec
-from common_grants_sdk.schemas.pydantic import OppDefaultFilters, PaginatedBase
 
 _seq = count(1)
 T = TypeVar("T")
