@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A newer push supersedes an in-flight run on the same ref, but never on main.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  verify:
+    name: Checks, tests and audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+
+      - name: Install Poetry
+        run: pipx install poetry==2.5.1
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Run lint, format and type checks
+        run: make checks
+
+      - name: Run tests with coverage
+        run: make test-coverage
+
+      - name: Audit dependencies
+        run: make audit
+
+  sdk-range:
+    name: Tests against the newest SDK in range
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+
+      - name: Install Poetry
+        run: pipx install poetry==2.5.1
+
+      - name: Install dependencies
+        run: make install
+
+      # Moves only common-grants-sdk, and only within the range pyproject.toml declares.
+      - name: Update the SDK to the newest release in range
+        run: |
+          poetry update common-grants-sdk
+          poetry show common-grants-sdk
+
+      - name: Run tests
+        run: make test
