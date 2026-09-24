@@ -104,8 +104,10 @@ becomes a `500`, never a `200`. Requests that do not match their SDK model get
 a `400`, and an unknown but well-formed id gets a `404`; every error body
 validates against the SDK's `Error` model.
 
-Pagination defaults come from the SDK's request models, as does the sort
-direction when a search names a `sortBy` without a `sortOrder`.
+The template applies the protocol's default page size of 100 where the Python
+SDK's pagination model says 10. A search that names a `sortBy` without a
+`sortOrder` sorts ascending, as in the other CommonGrants templates, and a
+search that sends no sorting gets `lastModifiedAt` descending.
 
 The supported SDK range is `common-grants-sdk` `^0.8.1`: 0.8.1 up to, but not
 including, 0.9.0. CI tests both ends. The `verify` job runs against the version

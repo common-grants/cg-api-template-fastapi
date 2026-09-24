@@ -33,7 +33,8 @@ write yours:
   codes, no request objects. Return models and a total count in a `Page`; the
   routes build the response.
 - **`pagination` is already validated.** `page` and `page_size` are positive
-  integers with the SDK's defaults applied by the time they reach you.
+  integers with the protocol's defaults (1 and 100) applied by the time they
+  reach you.
 - **`sorting` is already resolved.** `sort_by` is a key you can execute and
   `sort_order` is `"asc"` or `"desc"`. Implementation-defined sort keys never
   reach you; the routes fall back to the default order and report that in
