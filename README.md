@@ -107,6 +107,11 @@ validates against the SDK's `Error` model.
 Pagination defaults come from the SDK's request models, as does the sort
 direction when a search names a `sortBy` without a `sortOrder`.
 
+The supported SDK range is `common-grants-sdk` `^0.8.1`: 0.8.1 up to, but not
+including, 0.9.0. CI tests both ends. The `verify` job runs against the version
+in `poetry.lock`, currently the floor of the range, and the `sdk-range` job
+first updates the SDK to the newest release inside the range.
+
 ## Commands
 
 | Command                     | What it does                                               |
