@@ -10,6 +10,7 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, Request
 
+from common_grants.services.fixtures import fixture_repository
 from common_grants.services.repository import OpportunityRepository
 
 
@@ -26,3 +27,7 @@ def create_app(repository: OpportunityRepository) -> FastAPI:
     app = FastAPI()
     app.state.repository = repository
     return app
+
+
+# The app `fastapi dev` and `fastapi run` serve. Swap the repository here.
+app = create_app(fixture_repository)

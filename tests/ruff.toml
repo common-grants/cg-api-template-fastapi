@@ -3,7 +3,11 @@ extend = "../pyproject.toml"
 
 [lint]
 ignore = [
+  "ANN001", # missing argument type; parametrized test arguments are typed by their cases
   "ANN201", # missing return type
+  "D101", # missing class docstring; test names describe the behavior
+  "D102", # missing method docstring
+  "D103", # missing function docstring
   "PLR2004", # magic value used in comparison instead of constant
   "S101", # Use of `assert` detected
 ]
