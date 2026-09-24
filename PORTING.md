@@ -48,6 +48,9 @@ have to handle, including the parts that are easy to get wrong (see §4 and §5)
 Then wire it up in `src/common_grants/api.py`:
 
 ```diff
+ import logging
++import os
+
 -from common_grants.services.fixtures import fixture_repository
 +from common_grants.services.postgres import PostgresRepository
 
