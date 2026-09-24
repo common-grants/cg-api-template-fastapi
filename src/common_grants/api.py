@@ -91,6 +91,7 @@ def create_app(repository: OpportunityRepository) -> FastAPI:
     app = CommonGrantsAPI(
         title="CommonGrants API",
         version="0.1.0",
+        redoc_url=None,
         description="A CommonGrants API generated from the FastAPI template. Requests and "
         "responses are validated with the published CommonGrants Python SDK models.",
         openapi_tags=[

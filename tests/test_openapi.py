@@ -136,3 +136,8 @@ def test_serves_swagger_ui_pointing_at_the_document(client):
 def test_exports_the_served_document_as_yaml(document, capsys):
     generate_openapi.main()
     assert yaml.safe_load(capsys.readouterr().out) == document
+
+
+def test_serves_no_second_docs_ui(client):
+    # The CommonGrants templates share one docs UI, Swagger UI at /docs.
+    assert client.get("/redoc").status_code == 404
