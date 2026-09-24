@@ -14,9 +14,7 @@ from common_grants_sdk.schemas.pydantic import (
     Filtered,
     OppFilters,
     OppSortBy,
-    OppSorting,
     Paginated,
-    PaginatedQueryParams,
 )
 from fastapi.testclient import TestClient
 
@@ -37,8 +35,8 @@ BASE = "/common-grants/opportunities"
 # The list route's order: owned by the routes, handed to the repository.
 NEWEST_FIRST = SortSpec(OppSortBy.LAST_MODIFIED_AT, "desc")
 
-# Pagination defaults come from the SDK's own request models.
-DEFAULT_PAGE_SIZE = PaginatedQueryParams.model_fields["page_size"].default
+# Core's pagination.tsp default; the Python SDK's models say 10.
+DEFAULT_PAGE_SIZE = 100
 
 ListResponse = Paginated[Opportunity]
 SearchResponse = Filtered[Opportunity, OppFilters]
@@ -71,7 +69,7 @@ class TestListOpportunities:
             "totalPages": math.ceil(7 / DEFAULT_PAGE_SIZE),
         }
 
-    def test_applies_the_sdk_pagination_defaults_and_the_default_order(self):
+    def test_applies_the_protocol_pagination_defaults_and_the_default_order(self):
         client, stub = harness()
         client.get(BASE)
         assert [call["sorting"] for call in stub.calls["list"]] == [NEWEST_FIRST]
@@ -209,6 +207,11 @@ class TestSearchOpportunities:
         assert call["sorting"] == NEWEST_FIRST
         assert pages(stub.calls["search"]) == [(1, DEFAULT_PAGE_SIZE)]
 
+    def test_applies_the_protocol_page_size_when_the_body_names_only_a_page(self):
+        client, stub = harness()
+        search(client, {"pagination": {"page": 2}})
+        assert pages(stub.calls["search"]) == [(2, DEFAULT_PAGE_SIZE)]
+
     def test_passes_the_default_filters_straight_through_to_the_repository(self):
         client, stub = harness()
         search(client, {"filters": OPEN_ONLY})
@@ -269,25 +272,22 @@ class TestSearchOpportunities:
         assert "sideways" in sort_info["errors"][0]
         assert stub.calls["search"][0]["sorting"] == NEWEST_FIRST
 
-    def test_applies_the_sdk_default_order_to_an_explicit_sort_key(self):
+    # Core sets no default direction; ascending matches the other templates.
+    def test_defaults_an_explicitly_requested_sort_key_to_ascending(self):
         client, stub = harness()
-        default_order = OppSorting.model_fields["sort_order"].default
 
         sort_info = search(client, {"sorting": {"sortBy": "title"}}).json()["sortInfo"]
 
-        assert sort_info == {"sortBy": "title", "sortOrder": default_order}
-        assert stub.calls["search"][0]["sorting"] == SortSpec(
-            OppSortBy.TITLE,
-            default_order,
-        )
+        assert sort_info == {"sortBy": "title", "sortOrder": "asc"}
+        assert stub.calls["search"][0]["sorting"] == SortSpec(OppSortBy.TITLE, "asc")
 
     def test_passes_an_explicit_sort_through(self):
         client, stub = harness()
-        sorting = {"sortBy": "funding.maxAwardAmount", "sortOrder": "asc"}
+        sorting = {"sortBy": "funding.maxAwardAmount", "sortOrder": "desc"}
         assert search(client, {"sorting": sorting}).json()["sortInfo"] == sorting
         assert stub.calls["search"][0]["sorting"] == SortSpec(
             OppSortBy.MAX_AWARD_AMOUNT,
-            "asc",
+            "desc",
         )
 
     # Zero matches means zero pages; the protocol puts no minimum on totalPages.

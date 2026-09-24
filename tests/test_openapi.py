@@ -88,6 +88,26 @@ def test_documents_the_list_pagination_parameters(document):
     }
 
 
+def test_documents_the_protocol_default_page_size_for_the_list_query(document):
+    parameters = document["paths"][BASE]["get"]["parameters"]
+    [page_size] = [p for p in parameters if p["name"] == "pageSize"]
+    assert page_size["schema"]["default"] == 100
+
+
+def test_documents_the_search_defaults_the_api_applies(document):
+    body = document["paths"][f"{BASE}/search"]["post"]["requestBody"]
+    schema = body["content"]["application/json"]["schema"]
+    options = schema.get("anyOf", [schema])
+    request = next(resolve(document, o) for o in options if o.get("type") != "null")
+
+    pagination = resolve(document, request["properties"]["pagination"])
+    assert pagination["properties"]["pageSize"]["default"] == 100
+
+    sorting = request["properties"]["sorting"]
+    assert sorting["default"]["sortOrder"] == "desc"
+    assert resolve(document, sorting)["properties"]["sortOrder"]["default"] == "asc"
+
+
 def test_documents_the_opportunity_id_as_a_uuid_path_parameter(document):
     [parameter] = document["paths"][f"{BASE}/{{oppId}}"]["get"]["parameters"]
     assert parameter["name"] == "oppId"

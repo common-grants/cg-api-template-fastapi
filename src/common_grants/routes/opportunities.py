@@ -21,10 +21,10 @@ from common_grants_sdk.schemas.pydantic import (
     OppSorting,
     Paginated,
     PaginatedBase,
-    PaginatedQueryParams,
     Success,
 )
 from fastapi import APIRouter, Body, Depends, HTTPException, Path, Query, Request
+from pydantic import Field
 
 from common_grants.schemas.opportunity import Opportunity
 from common_grants.services.repository import OpportunityRepository, Page, SortSpec
@@ -36,6 +36,40 @@ def get_repository(request: Request) -> OpportunityRepository:
 
 
 Repository = Annotated[OpportunityRepository, Depends(get_repository)]
+
+
+class Pagination(PaginatedBase):
+    """The SDK's pagination with Core's default page size of 100; the SDK model says 10."""
+
+    page_size: int = Field(
+        default=100,
+        alias="pageSize",
+        ge=1,
+        description="The number of items per page",
+    )
+
+
+class SearchSorting(OppSorting):
+    """The SDK's sorting, where a `sortBy` without `sortOrder` sorts ascending, as in Hono."""
+
+    sort_order: str = Field(
+        default="asc",
+        alias="sortOrder",
+        description="The sort order (asc or desc)",
+    )
+
+
+# A search that sends no sorting gets the list route's order.
+DEFAULT_SORTING = SearchSorting(sortBy=OppSortBy.LAST_MODIFIED_AT, sortOrder="desc")
+
+
+class SearchRequest(OpportunitySearchRequest):
+    """The SDK's search request with this API's pagination and sort defaults."""
+
+    # Pydantic validates against these narrower types; pyright flags narrowing a field.
+    sorting: SearchSorting = DEFAULT_SORTING  # pyright: ignore[reportIncompatibleVariableOverride]  # fmt: skip
+    pagination: Pagination = Pagination()  # pyright: ignore[reportIncompatibleVariableOverride]  # fmt: skip
+
 
 OpportunitiesListResponse = Paginated[Opportunity]
 OpportunitiesSearchResponse = Filtered[Opportunity, OppFilters]
@@ -165,7 +199,7 @@ def _resolve_filters(
 )
 async def list_opportunities(
     repository: Repository,
-    pagination: Annotated[PaginatedQueryParams, Query()],
+    pagination: Annotated[Pagination, Query()],
 ) -> dict[str, Any]:
     """Return one page of opportunities, most recently modified first."""
     page = await repository.list(DEFAULT_SORT, pagination)
@@ -213,10 +247,10 @@ async def get_opportunity(
 )
 async def search_opportunities(
     repository: Repository,
-    body: Annotated[OpportunitySearchRequest | None, Body()] = None,
+    body: Annotated[SearchRequest | None, Body()] = None,
 ) -> dict[str, Any]:
     """Return one page of the opportunities matching every applied filter."""
-    body = body or OpportunitySearchRequest()
+    body = body or SearchRequest()
     sorting, sort_info = _resolve_sorting(body.sorting)
     filters, filter_info = _resolve_filters(body.filters, body.search)
 
