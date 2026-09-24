@@ -67,8 +67,10 @@ While you work:
    all read from it, which is what makes the one-file custom-field extension
    work. Do not import `OpportunityBase` directly elsewhere.
 5. **Do not weaken validation to make something pass.** No `model_construct()`,
-   no `type: ignore`, and no disabled rules to route around an error. Every
-   success body is re-validated by its SDK response model on purpose.
+   no `type: ignore`, and no disabled rules to route around an error. The one
+   exception is a rule-scoped `# pyright: ignore[...]` on a deliberate Pydantic
+   field override, with a comment saying why. Every success body is
+   re-validated by its SDK response model on purpose.
 6. **Update the docs you invalidated.** A change to the data seam usually means
    a change to `PORTING.md`.
 
