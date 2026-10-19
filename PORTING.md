@@ -64,8 +64,16 @@ at import time, before the server accepts a request. Put it in `.env`, which is
 already gitignored (`.env.example` shows the shape), and load it into your shell
 with `set -a; . ./.env; set +a` before `make dev`.
 
-Delete `services/fixtures.py`, `data/opportunities.json` and
-`tests/test_fixtures.py` once nothing imports them.
+The test suites and `make gen-openapi` import `api.py` too, so this line runs
+for them as well: set `DATABASE_URL` wherever they run, including
+`.github/workflows/ci.yml`. Have your repository open its connection on the
+first query, not in its constructor. A missing variable still fails at import,
+and the stub-repository suites in §7 never need a database.
+
+`src/common_grants/scripts/generate_openapi.py` still builds its app from
+`fixture_repository`. Have it export the app you just wired instead
+(`from common_grants.api import app`, then `app.openapi()`), then delete
+`services/fixtures.py`, `data/opportunities.json` and `tests/test_fixtures.py`.
 
 ## 2. Map your ids onto stable UUIDs
 
