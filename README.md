@@ -89,14 +89,14 @@ filters and sorts, adding custom fields in one file, and which tests to keep.
 
 ## Endpoints
 
-| Method | Path                                   | Description                                        |
-| ------ | -------------------------------------- | -------------------------------------------------- |
-| `GET`  | `/common-grants/opportunities`         | Paginated list, most recent `lastModifiedAt` first |
-| `GET`  | `/common-grants/opportunities/{oppId}` | One opportunity by id                              |
-| `POST` | `/common-grants/opportunities/search`  | Filtered, sorted, paginated search                 |
-| `GET`  | `/health`                              | Liveness check                                     |
-| `GET`  | `/openapi.json`                        | The OpenAPI 3.1 document                           |
-| `GET`  | `/docs`                                | Swagger UI for the OpenAPI document                |
+| Method | Path                                   | Description                                                                                                                 |
+| ------ | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/common-grants/opportunities`         | Paginated list, most recent `lastModifiedAt` first                                                                          |
+| `GET`  | `/common-grants/opportunities/{oppId}` | One opportunity by id                                                                                                       |
+| `POST` | `/common-grants/opportunities/search`  | Filtered, sorted, paginated search                                                                                          |
+| `GET`  | `/health`                              | Liveness check                                                                                                              |
+| `GET`  | `/openapi.json`                        | The OpenAPI 3.1 document                                                                                                    |
+| `GET`  | `/docs`                                | Swagger UI for the OpenAPI document; its assets load from the jsDelivr CDN (see [PORTING §9](PORTING.md#9-before-you-ship)) |
 
 Every success body is validated by its `common-grants-sdk` response model
 before it is sent, so repository output that drifts from the published shape
