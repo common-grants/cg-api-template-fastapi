@@ -368,14 +368,14 @@ markers = {main = "platform_system == \"Windows\"", dev = "sys_platform == \"win
 
 [[package]]
 name = "common-grants-sdk"
-version = "0.8.1"
+version = "0.9.0"
 description = "Python SDK for the CommonGrants protocol"
 optional = false
 python-versions = "<4.0,>=3.11"
 groups = ["main"]
 files = [
-    {file = "common_grants_sdk-0.8.1-py3-none-any.whl", hash = "sha256:3ebe3d02570c59fc4538673bed37df0d30698264ffe686ce52b90e1d02f64ae0"},
-    {file = "common_grants_sdk-0.8.1.tar.gz", hash = "sha256:ddd7d16a1f7458d3d57ca79efc3623337a9ee5581330d13245cf0842795cab7c"},
+    {file = "common_grants_sdk-0.9.0-py3-none-any.whl", hash = "sha256:0e8270d52a6476989680c1791c6834fc13d7111752d53751d8c20af0aed49366"},
+    {file = "common_grants_sdk-0.9.0.tar.gz", hash = "sha256:9aa43e80f5eb3c57a24af6890ecbbd230cb70d9f63fd80b53a09fcdb0f401d54"},
 ]
 
 [package.dependencies]
@@ -2855,4 +2855,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "ab9779d6d7344aad4c4dd5ec5845cfd72f6738679f8c0ae69c8e4ec992e38f78"
+content-hash = "e18a8bf3b6624db31cc460421ea4e7dcf387a22b4b8557c774880ec0c902226f"
