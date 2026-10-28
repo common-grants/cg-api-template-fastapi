@@ -60,7 +60,7 @@ class SearchSorting(OppSorting):
 
 
 # A search that sends no sorting gets the list route's order.
-DEFAULT_SORTING = SearchSorting(sortBy=OppSortBy.LAST_MODIFIED_AT, sortOrder="desc")
+DEFAULT_SORTING = SearchSorting(sort_by=OppSortBy.LAST_MODIFIED_AT, sortOrder="desc")
 
 
 class SearchRequest(OpportunitySearchRequest):

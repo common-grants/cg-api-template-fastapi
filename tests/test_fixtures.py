@@ -30,7 +30,7 @@ HISTORIC = "5e3c8b6f-9073-4b14-8f65-000000000006"
 VOUCHERS = "6f4d9c70-a184-4c25-9076-000000000007"
 COASTAL = "7a5e0d81-b295-4d36-8187-000000000008"
 
-ALL_PAGES = PaginatedBodyParams(page=1, pageSize=100)
+ALL_PAGES = PaginatedBodyParams(page=1, page_size=100)
 NEWEST_FIRST_ORDER = SortSpec(OppSortBy.LAST_MODIFIED_AT, "desc")
 
 # Descending lastModifiedAt; the broadband/STEM tie breaks on ascending id.
@@ -82,7 +82,7 @@ class TestGet:
 
 class TestList:
     def list_ids(self, page: int, page_size: int) -> tuple[list[str], int]:
-        pagination = PaginatedBodyParams(page=page, pageSize=page_size)
+        pagination = PaginatedBodyParams(page=page, page_size=page_size)
         result = asyncio.run(fixture_repository.list(NEWEST_FIRST_ORDER, pagination))
         return [str(o.id) for o in result.items], result.total_items
 
@@ -254,7 +254,7 @@ class TestSearchFilters:
         applied = OppDefaultFilters.model_validate(
             {"status": {"operator": "in", "value": ["open"]}},
         )
-        second_page = PaginatedBodyParams(page=2, pageSize=3)
+        second_page = PaginatedBodyParams(page=2, page_size=3)
         result = asyncio.run(
             fixture_repository.search(applied, NEWEST_FIRST_ORDER, second_page),
         )
